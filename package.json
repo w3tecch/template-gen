@@ -13,7 +13,7 @@
     "tg": "node index.js -d ./templates"
   },
   "repository": "git+ssh://git@github.com/w3tec/template-gen.git",
-  "homepage": "https://github.com/w3tec/template-gen#readme",
+  "homepage": "https://github.com/w3tecch/template-gen",
   "keywords": [
     "template",
     "generator"
