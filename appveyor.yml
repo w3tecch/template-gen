@@ -1,0 +1,11 @@
+environment:
+  nodejs_version: "8"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - yarn install
+
+test_script:
+  - mkdir html
+  - node index.js HTML --name testname
+  - if exist .\html\testname.html || exit /b
