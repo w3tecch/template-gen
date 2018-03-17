@@ -11,4 +11,4 @@ build_script:
 test_script:
   - mkdir html
   - node index.js HTML --name testname
-  - if exist .\html\testname.html || exit /b
+  - if not exist .\html\testname.html exit /b
