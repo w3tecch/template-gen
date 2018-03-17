@@ -53,7 +53,7 @@ npm install template-gen --save-dev
 then add the following entry to your npm scripts
 ```json
 {
-    "tg": "template-gen -d ./templates"
+    "tg": "tg -d ./templates"
 }
 ```
 
@@ -75,14 +75,31 @@ module.exports = {
     name: 'Controller',
     description: 'Creating a controller',
     target: 'controllers',
-    parameters: {
-        type: 'text',
-        name: 'controller',
-        message: 'Whats the controller name?'
-    },
+    parameters: [
+        {
+            type: 'text',
+            name: 'controller',
+            message: 'Whats the controller name?'
+        },
+        {
+            type: 'confirm',
+            name: 'haveConstructor',
+            message: 'With a constructor?'
+        }
+    ],
 
     template: (params) => {
-        return `super bubu ${params.controller}`;
+        return `
+export default class ${params.controller} {
+    someAttribute = '';` +
+            (params.haveConstructor ? `
+
+    constructor () {
+
+    }` : '') +
+`
+}
+`;
     },
 
     fileName: (params) => {
