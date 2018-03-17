@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - "8.9.4"
+install:
+  - yarn install
+script:
+  - mkdir html
+  - node index.js HTML --name testname
+  - (ls ./html/testname.html && exit 0) || exit 1
+notifications:
+  email: false

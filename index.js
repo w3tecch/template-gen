@@ -13,10 +13,8 @@ let templateAction = argv && argv._ && Array.isArray(argv._) && argv._[0] || und
 let templateObject;
 
 /**
- * Github
- * npm
+ * Let's start with an async function for prompts
  */
-
 (async function () {
 
     await banner('Template Generator');
@@ -49,7 +47,7 @@ let templateObject;
                         name: 'templatePath',
                         message: 'Please provide a template paths?',
                         initial: './templates'
-                    });
+                    }, { onCancel: () => process.exit(0) });
                     templatePath = response.templatePath;
                 } catch (error) {
                     process.exit(1);
@@ -87,7 +85,7 @@ let templateObject;
                 name: 'templateObject',
                 message: 'Pick an template?',
                 choices: templateFiles.map(file => ({ title: file.name, value: file }))
-            });
+            }, { onCancel: () => process.exit(0) });
             templateObject = response.templateObject;
         } catch (error) {
             process.exit(1);
@@ -101,6 +99,14 @@ let templateObject;
     }
 
     /**
+     * Inject prompts with minimist arguments
+     */
+    try {
+        const args = Object.keys(argv).filter(key => !['_', 'd'].includes(key)).map(key => ({ [key]: argv[key] })).reduce((a, b) => ({ ...a, ...b }));
+        prompts.inject(args);
+    } catch (error) { }
+
+    /**
      * Execute template
      */
     if (templateObject) {
@@ -109,7 +115,7 @@ let templateObject;
             console.log(chalk.green.bold(templateObject.description));
             console.log('');
 
-            const parameters = await prompts(templateObject.parameters);
+            const parameters = await prompts(templateObject.parameters, { onCancel: () => process.exit(0) });
             const file = templateObject.fileName(parameters);
             const fullFilePath = path.join(templateObject.target, file);
 
