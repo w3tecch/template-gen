@@ -1,0 +1,29 @@
+{
+  "name": "template-gen",
+  "version": "1.0.0",
+  "description": "A flexible template generator for any project",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8"
+  },
+  "bin": {
+    "tg": "./index.js"
+  },
+  "scripts": {
+    "tg": "node index.js -d ./templates"
+  },
+  "keywords": [
+    "template",
+    "generator"
+  ],
+  "author": "David Weber <david.weber.schenker@gmail.com> (w3tec.ch)",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.3.2",
+    "figlet": "^1.2.0",
+    "glob": "^7.1.2",
+    "minimist": "^1.2.0",
+    "mustache": "^2.3.0",
+    "prompts": "^0.1.8"
+  }
+}
