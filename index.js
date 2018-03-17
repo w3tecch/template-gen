@@ -117,7 +117,14 @@ let templateObject;
 
             const parameters = await prompts(templateObject.parameters, { onCancel: () => process.exit(0) });
             const file = templateObject.fileName(parameters);
-            const fullFilePath = path.join(templateObject.target, file);
+
+            let response = await prompts({
+                type: 'text',
+                name: 'filepath',
+                message: 'Do you like to change the default path?',
+                initial: templateObject.target
+            }, { onCancel: () => process.exit(0) });
+            const fullFilePath = path.join(response.filepath, file);
 
             if (fs.existsSync(fullFilePath)) {
                 let response = await prompts({
