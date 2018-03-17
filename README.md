@@ -5,14 +5,14 @@
 <h1 align="center">Template Generator</h1>
 
 <p align="center">
-  <a href="https://david-dm.org/w3tecch/template-generator">
-    <img src="https://david-dm.org/w3tecch/template-generator/status.svg?style=flat" alt="dependency" />
+  <a href="https://david-dm.org/w3tecch/template-gen">
+    <img src="https://david-dm.org/w3tecch/template-gen/status.svg?style=flat" alt="dependency" />
   </a>
-  <a href="https://travis-ci.org/w3tecch/template-generator">
-    <img src="https://travis-ci.org/w3tecch/template-generator.svg?branch=master" alt="travis" />
+  <a href="https://travis-ci.org/w3tecch/template-gen">
+    <img src="https://travis-ci.org/w3tecch/template-gen.svg?branch=master" alt="travis" />
   </a>
-  <a href="https://ci.appveyor.com/project/dweber019/template-generator/branch/master">
-    <img src="https://ci.appveyor.com/api/projects/status/f8e7jdm8v58hcwpq/branch/master?svg=true&passingText=Windows%20passing&pendingText=Windows%20pending&failingText=Windows%20failing" alt="appveyor" />
+  <a href="https://ci.appveyor.com/project/dweber019/template-gen/branch/master">
+    <img src="https://ci.appveyor.com/api/projects/status/757wmb09thw1bhr4/branch/master?svg=true&passingText=Windows%20passing&pendingText=Windows%20pending&failingText=Windows%20failing" alt="appveyor" />
   </a>
 </p>
 
@@ -38,7 +38,7 @@ It's tedious to always copy & past the same file or file content over and over a
 ### As global CLI
 You can install this module globally by
 ```shell
-npm install -g template-generator
+npm install -g template-gen
 ```
 
 Have a look at [RC configuration](#-RC-configuration) how you can setup a template path.
@@ -46,7 +46,7 @@ Have a look at [RC configuration](#-RC-configuration) how you can setup a templa
 ### As project dependency
 Add this module to your project dependencies
 ```shell
-npm install template-generator --save-dev
+npm install template-gen --save-dev
 ```
 
 then add the following entry to your npm scripts
@@ -112,6 +112,16 @@ npm run tg
 
 Then you will be asked for the template parameters and finally create the file.
 
+### Use Parameters
+If you have template like the above with name `Controller` and prompt `controller` then you could use this to execute without prompts
+```shell
+npm run tg -- Controller --controller User --haveConstructor true
+```
+
+Or just if you just like to create a controller with prompts
+```shell
+npm run tg Controller
+```
 
 ## ❯ RC configuration
 In you project root you can create a file named `.tgrc` to configure you template path
