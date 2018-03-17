@@ -5,6 +5,9 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - yarn install
 
+build_script:
+  - echo Noting to build
+
 test_script:
   - mkdir html
   - node index.js HTML --name testname
