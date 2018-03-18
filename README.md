@@ -75,6 +75,7 @@ module.exports = {
     name: 'Controller',
     description: 'Creating a controller',
     target: 'controllers',
+    wrapFolder: params => `${params.controller.toLowerCase()}`,
     parameters: [
         {
             type: 'text',
@@ -87,24 +88,27 @@ module.exports = {
             message: 'With a constructor?'
         }
     ],
-
-    template: (params) => {
-        return `
-export default class ${params.controller} {
+    files: [
+        {
+            template: params => {
+                return `export default class ${params.controller} {
     someAttribute = '';` +
-            (params.haveConstructor ? `
+                    (params.haveConstructor ? `
 
     constructor () {
 
     }` : '') +
-`
+                    `
 }
 `;
-    },
-
-    fileName: (params) => {
-        return `${params.controller}Controller.ts`;
-    }
+            },
+            fileName: params => `${params.controller}Controller.ts`
+        },
+        {
+            template: () => '<template></template>',
+            fileName: params => `${params.controller}Controller.html`
+        }
+    ]
 }
 ```
 > Don't forget to create the `controllers` folder
@@ -116,9 +120,10 @@ export default class ${params.controller} {
 | name           | The name to enter or select in the CLI |
 | description    | Will be shown after you selected the name in the CLI |
 | target         | The target directory from the root where the file will be created in |
+| wrapFolder     | Should be undefined or a function which returns the parent folder name |
 | parameters     | The CLI prompts to ask the user, you can use this [prompts](https://github.com/terkelg/prompts) options |
-| template       | The content of the generated file |
-| fileName       | The file name of the generated file |
+| files.template | The content of the generated file |
+| files.fileName | The file name of the generated file |
 
 > The parameters attribute can be a object or an array of [prompts](https://github.com/terkelg/prompts) options.
 
