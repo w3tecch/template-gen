@@ -17,7 +17,7 @@ let templateObject;
  */
 (async function () {
 
-    await banner('Template Generator');
+    banner('Template Generator');
 
     /**
      * Fallback for template path
@@ -29,17 +29,16 @@ let templateObject;
             try {
                 templatePath = JSON.parse(fs.readFileSync('./.tgrc').toString()).path;
             } catch (error) {
-                console.log(chalk.red(`Could not parse .tgrc file`));
-                process.exit(1);
+                handleError(`Could not parse .tgrc file`);
             }
         } else {
-            console.log(chalk.yellow(`No template folder provided. Searching in for "./templates" folder in: ${process.cwd()}`));
+            warn(`No template folder provided. Searching in for "./templates" folder in: ${process.cwd()}`);
 
             if (fs.existsSync('./templates')) {
                 templatePath = './templates';
-                console.log(chalk.yellow(`Found template folder in: ${process.cwd()}`));
+                warn(`Found template folder in: ${process.cwd()}`);
             } else {
-                console.log(chalk.yellow('Template folder could not be found.'));
+                warn('Template folder could not be found.');
 
                 try {
                     let response = await prompts({
@@ -50,7 +49,7 @@ let templateObject;
                     }, { onCancel: () => process.exit(0) });
                     templatePath = response.tgTemplatePath;
                 } catch (error) {
-                    process.exit(1);
+                    handleError(`Could not provide a template path`);
                 }
             }
         }
@@ -62,13 +61,11 @@ let templateObject;
     const templateFiles = await new Promise(resolve => {
         glob(`${process.cwd()}/${templatePath}/**/*.js`, (err, files) => {
             if (err) {
-                console.log(chalk.red(`Could not find any template files in ${templatePath}/**/*.js`));
-                process.exit(1);
+                handleError(`Could not find any template files in ${templatePath}/**/*.js`);
             }
 
             if (files.length === 0) {
-                console.log(chalk.red(`Could not find any template files in ${templatePath}/**/*.js`));
-                process.exit(1);
+                handleError(`Could not find any template files in ${templatePath}/**/*.js`);
             }
 
             resolve(files.map(file => require(file)));
@@ -83,18 +80,17 @@ let templateObject;
             let response = await prompts({
                 type: 'select',
                 name: 'tgTemplateObject',
-                message: 'Pick an template?',
+                message: 'Pick a template?',
                 choices: templateFiles.map(file => ({ title: file.name, value: file }))
-            }, { onCancel: () => process.exit(0) });
+            }, { onCancel: endScript });
             templateObject = response.tgTemplateObject;
         } catch (error) {
-            process.exit(1);
+            handleError(`Could not proceed with the given template`);
         }
     } else {
         templateObject = templateFiles.find(file => file.name === templateAction);
         if (templateObject === undefined) {
-            console.log(chalk.red(`The template with name "${templateAction}" could not be found`));
-            process.exit(1);
+            handleError(`The template with name "${templateAction}" could not be found`);
         }
     }
 
@@ -115,14 +111,14 @@ let templateObject;
             console.log(chalk.green.bold(templateObject.description));
             console.log('');
 
-            const parameters = await prompts(templateObject.parameters, { onCancel: () => process.exit(0) });
+            const parameters = await prompts(templateObject.parameters, { onCancel: endScript });
 
             let response = await prompts({
                 type: 'text',
                 name: 'tgTarget',
                 message: 'Do you like to change the default path?',
                 initial: templateObject.target
-            }, { onCancel: () => process.exit(0) });
+            }, { onCancel: endScript });
 
             let target;
             if (templateObject.wrapFolder) {
@@ -147,7 +143,7 @@ let templateObject;
                         initial: false
                     }, { onCancel: () => process.exit(0) });
                     if (!response[`tgOverwrite${fileName}`]) {
-                        process.exit(0);
+                        endScript();
                     }
                 }
 
@@ -156,15 +152,16 @@ let templateObject;
                     file.template(parameters),
                     (err) => {
                         if (err) {
-                            console.log(chalk.red(`The was an error while saving file "${fileName}" in: ${fullFilePath}`));
-                            process.exit(1);
+                            handleError(`The was an error while saving file "${fileName}" in: ${fullFilePath}`)
                         }
-                        console.log(chalk.green(`File "${fullFilePath}" created`));
+                        console.log(chalk.green('✔ ') + 'Create the file: ' + chalk.bold.underline(fullFilePath));
                         resolve();
                     }));
             }
         })();
     }
+
+    endScript();
 
 })();
 
@@ -172,15 +169,18 @@ let templateObject;
  * Helpers
  */
 function banner(title) {
-    return new Promise(resolve => {
-        figlet(title, (error, data) => {
-            if (error) {
-                return process.exit(1);
-            }
+    console.log(chalk.blue(figlet.textSync(title)));
+}
 
-            console.log(chalk.blue(data));
-            console.log('');
-            resolve();
-        });
-    });
+function handleError(message) {
+    console.log(chalk.red(message));
+    process.exit(1);
+}
+
+function warn(message) {
+    console.log(chalk.yellow(message));
+}
+
+function endScript() {
+    process.exit(0);
 }
