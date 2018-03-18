@@ -60,7 +60,7 @@ let templateObject;
      * Get all template files
      */
     const templateFiles = await new Promise(resolve => {
-        glob(`${templatePath}/**/*.js`, (err, files) => {
+        glob(`${process.cwd()}/${templatePath}/**/*.js`, (err, files) => {
             if (err) {
                 console.log(chalk.red(`Could not find any template files in ${templatePath}/**/*.js`));
                 process.exit(1);
