@@ -2,6 +2,7 @@ module.exports = {
     name: 'Controller',
     description: 'Creating a controller',
     target: 'controllers',
+    wrapFolder: params => `${params.controller.toLowerCase()}`,
     parameters: [
         {
             type: 'text',
@@ -14,22 +15,25 @@ module.exports = {
             message: 'With a constructor?'
         }
     ],
-
-    template: (params) => {
-        return `
-export default class ${params.controller} {
+    files: [
+        {
+            template: params => {
+                return `export default class ${params.controller} {
     someAttribute = '';` +
-            (params.haveConstructor ? `
+                    (params.haveConstructor ? `
 
     constructor () {
 
     }` : '') +
-`
+                    `
 }
 `;
-    },
-
-    fileName: (params) => {
-        return `${params.controller}Controller.ts`;
-    }
+            },
+            fileName: params => `${params.controller}Controller.ts`
+        },
+        {
+            template: () => '<template></template>',
+            fileName: params => `${params.controller}Controller.html`
+        }
+    ]
 }
