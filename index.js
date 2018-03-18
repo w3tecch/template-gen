@@ -161,6 +161,8 @@ let templateObject;
         })();
     }
 
+    process.exit(0);
+
 })();
 
 /**
