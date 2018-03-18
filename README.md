@@ -19,7 +19,7 @@
 <p align="center">
   <b>A delightful way to have a flexible template generator for all sorts of templates</b></br>
   Heavily inspired by <a href="https://github.com/angular/angular-cli/wiki/generate">Angular CLI</a> and the <a href="http://aurelia.io/docs/build-systems/aurelia-cli#generators">Aurelia CLI</a>.<br>
-  <sub>Made with ❤️ by <a href="https://github.com/w3tecch">w3tech</a>, <a href="https://www.linkedin.com/in/david-weber-6a0819b7/">David Weber</a> and <a href="https://github.com/w3tecch/template-gen/graphs/contributors">contributors</a></sub>
+  <sub>Made with ❤️ by <a href="https://github.com/w3tecch">w3tech</a> and <a href="https://github.com/w3tecch/template-gen/graphs/contributors">contributors</a></sub>
 </p>
 
 <br />
