@@ -5,7 +5,7 @@ install:
   - yarn install
 script:
   - mkdir html
-  - node index.js HTML --name testname
+  - node index.js HTML --name testname --tgTarget html
   - (ls ./html/testname.html && exit 0) || exit 1
 notifications:
   email: false

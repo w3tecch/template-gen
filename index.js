@@ -44,11 +44,11 @@ let templateObject;
                 try {
                     let response = await prompts({
                         type: 'text',
-                        name: 'templatePath',
+                        name: 'tgTemplatePath',
                         message: 'Please provide a template paths?',
                         initial: './templates'
                     }, { onCancel: () => process.exit(0) });
-                    templatePath = response.templatePath;
+                    templatePath = response.tgTemplatePath;
                 } catch (error) {
                     process.exit(1);
                 }
@@ -82,11 +82,11 @@ let templateObject;
         try {
             let response = await prompts({
                 type: 'select',
-                name: 'templateObject',
+                name: 'tgTemplateObject',
                 message: 'Pick an template?',
                 choices: templateFiles.map(file => ({ title: file.name, value: file }))
             }, { onCancel: () => process.exit(0) });
-            templateObject = response.templateObject;
+            templateObject = response.tgTemplateObject;
         } catch (error) {
             process.exit(1);
         }
@@ -116,38 +116,53 @@ let templateObject;
             console.log('');
 
             const parameters = await prompts(templateObject.parameters, { onCancel: () => process.exit(0) });
-            const file = templateObject.fileName(parameters);
 
             let response = await prompts({
                 type: 'text',
-                name: 'filepath',
+                name: 'tgTarget',
                 message: 'Do you like to change the default path?',
                 initial: templateObject.target
             }, { onCancel: () => process.exit(0) });
-            const fullFilePath = path.join(response.filepath, file);
 
-            if (fs.existsSync(fullFilePath)) {
-                let response = await prompts({
-                    type: 'confirm',
-                    name: 'shouldOverwrite',
-                    message: 'The file exists you want to overwrite?',
-                    initial: false
-                }, { onCancel: () => process.exit(0) });
-                if (!response.shouldOverwrite) {
-                    process.exit(0);
+            let target;
+            if (templateObject.wrapFolder) {
+                const wrapFolder = path.join(response.tgTarget, templateObject.wrapFolder(parameters));
+                if (!fs.existsSync(wrapFolder)) {
+                    fs.mkdirSync(wrapFolder);
                 }
+                target = wrapFolder;
+            } else {
+                target = path.join(response.tgTarget);
             }
 
-            fs.writeFile(
-                fullFilePath,
-                templateObject.template(parameters),
-                (err) => {
-                    if (err) {
-                        console.log(chalk.red(`The was an error while saving file "${file}" in: ${fullFilePath}`));
-                        process.exit(1);
+            for (let file of templateObject.files) {
+                const fileName = file.fileName(parameters);
+                const fullFilePath = path.join(target, fileName);
+
+                if (fs.existsSync(fullFilePath)) {
+                    let response = await prompts({
+                        type: 'confirm',
+                        name: `tgOverwrite${fileName}`,
+                        message: `The file "${fileName}" exists you want to overwrite?`,
+                        initial: false
+                    }, { onCancel: () => process.exit(0) });
+                    if (!response[`tgOverwrite${fileName}`]) {
+                        process.exit(0);
                     }
-                    console.log(chalk.green(`File "${fullFilePath}" created`));
-                });
+                }
+
+                await new Promise(resolve => fs.writeFile(
+                    fullFilePath,
+                    file.template(parameters),
+                    (err) => {
+                        if (err) {
+                            console.log(chalk.red(`The was an error while saving file "${fileName}" in: ${fullFilePath}`));
+                            process.exit(1);
+                        }
+                        console.log(chalk.green(`File "${fullFilePath}" created`));
+                        resolve();
+                    }));
+            }
         })();
     }
 
