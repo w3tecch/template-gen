@@ -82,7 +82,7 @@ let templateObject;
                 name: 'tgTemplateObject',
                 message: 'Pick a template?',
                 choices: templateFiles.map(file => ({ title: file.name, value: file }))
-            }, { onCancel: () => process.exit(0) });
+            }, { onCancel: endScript });
             templateObject = response.tgTemplateObject;
         } catch (error) {
             handleError(`Could not proceed with the given template`);
@@ -111,14 +111,14 @@ let templateObject;
             console.log(chalk.green.bold(templateObject.description));
             console.log('');
 
-            const parameters = await prompts(templateObject.parameters, { onCancel: () => process.exit(0) });
+            const parameters = await prompts(templateObject.parameters, { onCancel: endScript });
 
             let response = await prompts({
                 type: 'text',
                 name: 'tgTarget',
                 message: 'Do you like to change the default path?',
                 initial: templateObject.target
-            }, { onCancel: () => process.exit(0) });
+            }, { onCancel: endScript });
 
             let target;
             if (templateObject.wrapFolder) {
@@ -143,7 +143,7 @@ let templateObject;
                         initial: false
                     }, { onCancel: () => process.exit(0) });
                     if (!response[`tgOverwrite${fileName}`]) {
-                        process.exit(0);
+                        endScript();
                     }
                 }
 
@@ -161,7 +161,7 @@ let templateObject;
         })();
     }
 
-    process.exit(0);
+    endScript();
 
 })();
 
@@ -179,4 +179,8 @@ function handleError(message) {
 
 function warn(message) {
     console.log(chalk.yellow(message));
+}
+
+function endScript() {
+    process.exit(0);
 }
